@@ -42,6 +42,10 @@ The *Manual mode* button is used as a substitute for the beat-tracker in case th
 
 The *BPM recalculate* button is used instead to restart the automatic calculation of BPM in the case in which between one song and the other the variance found is not lower than that one of the previous song (read again the calculation method of BPM). This would mean that the BPM would not be immediately updated with the true one.
 
+# BPM Calculus using autocorrelation
+
+<p align="center"> <img src="images/BPMAutocorr.png" > </p>
+
 ## Feature extraction phase
 
 Features' extraction is a crucial phase for what concern the rules for the choice of the lights' animations: this is made in real-time, frame by frame and independently from the beat-tracking algorithm.
