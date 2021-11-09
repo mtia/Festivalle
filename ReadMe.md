@@ -51,8 +51,10 @@ The two values are compared in the same box.
 <p align="center"> <img src="images/BPMAutocorr.png" > </p>
 
 The signal is downsampled in in this stage to avoid excessive CPU load.
-A buffer of 9600 samples is analyzed, computing 1200 time lags that span from 75 BPM to 150 BPM.
+A buffer of 9600 samples is analyzed, computing 1200 time lags.
 <p align="center"> <img src="images/Autocorr.png" > </p>
+
+The time lag j with maximum value determines the tempo of the music. The 1200 autocorrelation lags correspond to tempo values between 75 BPM and 150 BPM.
 
 ## Feature extraction phase
 
