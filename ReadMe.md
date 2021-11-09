@@ -50,6 +50,7 @@ The two values are compared in the same box.
 
 The signal is downsampled in in this stage to avoid excessive CPU load.
 A buffer of 9600 samples is analyzed, computing 1200 time lags that span from 75 BPM to 150 BPM.
+<p align="center"> <img src="images/Autocorr.png" > </p>
 
 ## Feature extraction phase
 
@@ -135,4 +136,4 @@ Davide Gioiosa <br>
 Davide Mori <br>
 Francesco Pino <br>
 
-Mattia Vassena for the Beat detection method using Autocorrelation Phase Matrix
+Mattia Vassena for the BPM calculus using the autocorrelation method
