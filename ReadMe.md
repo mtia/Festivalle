@@ -125,3 +125,5 @@ Carmelo Fascella <br>
 Davide Gioiosa <br>
 Davide Mori <br>
 Francesco Pino <br>
+
+Mattia Vassena for the Beat detection method using Autocorrelation Phase Matrix
