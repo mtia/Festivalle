@@ -10,11 +10,13 @@ It contains the basic framework code for a JUCE plugin editor.
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+using namespace juce;
 
 //==============================================================================
 PluginEditor::PluginEditor(PluginProcessor& p)
 	: AudioProcessorEditor(&p), processor(p), startTime(Time::getMillisecondCounterHiRes() * 0.001),
-	forwardFFT(PluginProcessor::fftOrder), spectrogramImage(Image::RGB, 512, 512, true), panFeature(processor), beatDetector(processor), spectralCentroid(processor)
+	forwardFFT(PluginProcessor::fftOrder), spectrogramImage(Image::RGB, 512, 512, true), 
+	panFeature(processor), beatDetector(processor), spectralCentroid(processor), apm(processor)
 {
     panFeature.addChangeListener(this);
     beatDetector.addChangeListener(this);
@@ -25,10 +27,12 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     StringArray midiOutputList = MidiOutput::getDevices();
     int portIndex = midiOutputList.indexOf("loopMIDI Port");
     
-    if (portIndex != -1)
-        midiOutput = MidiOutput::openDevice(portIndex); //WINDOWS
-    else
-        midiOutput = MidiOutput::openDevice(0); //MAC
+	if (portIndex != -1)
+	{
+	}//midiOutput = MidiOutput::openDevice(portIndex); //WINDOWS
+	else
+	{
+	}//midiOutput = MidiOutput::openDevice(0); //MAC
 
 
 	addAndMakeVisible(panCount);
@@ -61,6 +65,12 @@ PluginEditor::PluginEditor(PluginProcessor& p)
 	actualBPM.setReadOnly(true);
 	actualBPM.setColour(TextEditor::backgroundColourId, Colour(0x32ffffff));
 	actualBPM.setColour(TextEditor::shadowColourId, Colour(0x16000000));
+
+	addAndMakeVisible(acpmBPM);
+	acpmBPM.setText("BPM: calculate...");
+	acpmBPM.setReadOnly(true);
+	acpmBPM.setColour(TextEditor::backgroundColourId, Colour(0x32ffffff));
+	acpmBPM.setColour(TextEditor::shadowColourId, Colour(0x16000000));
 
     addAndMakeVisible(tapTempo);
     tapTempo.setButtonText("Tap Tempo"); 
@@ -250,6 +260,8 @@ void PluginEditor::resized()
 
 	actualBPM.setBounds(buttonsBounds.getX(), 10, buttonsBounds.getWidth(), 20);
 
+	acpmBPM.setBounds(buttonsBounds.getX() + 250, 10, buttonsBounds.getWidth() - 250, 20);
+
 	midiMessagesBox.setBounds(getLocalBounds().withWidth(halfWidth).withX(halfWidth).reduced(10));
     
     tapTempo.setBounds(buttonsBounds.getX(), 230, buttonsBounds.getWidth(), 20);
@@ -339,7 +351,7 @@ void PluginEditor::setNoteNumber(int faderNumber, int velocity)
     
 	if (faderNumber == 0) {
 		message.setTimeStamp(timeNow - startTime);
-		midiOutput->sendMessageNow(message);
+		//midiOutput->sendMessageNow(message);
 		//printf("\n%f", spectralCentroid.centroidL);
 
 		//velocityMessage.setText((String)maxVelocity);
@@ -360,7 +372,7 @@ void PluginEditor::setNoteNumber(int faderNumber, int velocity)
 			
 			message = MidiMessage::controllerEvent(midiChannel, lightNumber, velocity);
 			message.setTimeStamp(timeNow - startTime);
-			midiOutput->sendMessageNow(message);
+			//midiOutput->sendMessageNow(message);
 			addMessageToList(message);
 			//printf("\n%f", spectralCentroid.centroidL);
 		}
@@ -372,7 +384,7 @@ void PluginEditor::setNoteNumber(int faderNumber, int velocity)
 
 		message = MidiMessage::controllerEvent(midiChannel, lightNumber, velocity);
 		message.setTimeStamp(timeNow - startTime);
-		midiOutput->sendMessageNow(message);
+		//midiOutput->sendMessageNow(message);
 		addMessageToList(message);
 	}
    
@@ -400,6 +412,7 @@ void PluginEditor::BPMDetection(double timeNow)
 
 	else 
 	{
+		acpmBPM.setText("Autocorr: " + (String)(apm.BPM)+" BPM");
 		double deltaT = timeNow - prevTime - startTime;
 		deltaTQueue.push(deltaT);
 
@@ -421,6 +434,7 @@ void PluginEditor::BPMDetection(double timeNow)
 				BPM = round(60 / av);
 				varianceBeat = var;
 				actualBPM.setText("BPM: " + (String)BPM);
+				
 			}
 
 			actualVar.setText("actualVar: " + (String)var);
@@ -450,6 +464,7 @@ void PluginEditor::manualBPM()
     if(numBeat > 1) {
         BPM = round(60 / timeAverage);
 		actualBPM.setText("BPM: " + (String)BPM);
+		acpmBPM.setText("acpmBPM: " + (String)(apm.BPM));
     }
     
    /* message.setTimeStamp((timeNow - startTime));
@@ -571,6 +586,8 @@ void PluginEditor::drawNextLineOfSpectrogram()
     panFeature.run();               //START PAN FEATURE THREAD
     
     spectralCentroid.run();         //START SPECTRAL CENTROID THREAD
+
+	apm.run();
     
 
 	//-----FORSE

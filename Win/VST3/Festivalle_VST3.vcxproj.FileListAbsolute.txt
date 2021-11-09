@@ -1,0 +1,2 @@
+F:\Desktop\NewProject\Builds\VisualStudio2019\x64\Debug\VST3\NewProject.vst3
+F:\Desktop\NewProject\Builds\VisualStudio2019\x64\Debug\VST3\NewProject.pdb

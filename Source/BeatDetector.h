@@ -15,7 +15,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
-
+using namespace juce;
 //==============================================================================
 /*
 */

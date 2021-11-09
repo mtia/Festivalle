@@ -10,6 +10,7 @@ It contains the basic framework code for a JUCE plugin processor.
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "APM.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
@@ -218,23 +219,38 @@ void PluginProcessor::pushNextSampleIntoFifo(float sample, int channel) noexcept
 {
 	if (channel == 0)
 	{
-		if (fifoIndexL == fftSize)    // [8]
+		if (fifoIndexL == fftSize)    // if we have enough samples to fullfill the fft
 		{
 			if (!nextFFTBlockReady) // [9]
 			{
-				zeromem(fftDataL, sizeof(fftDataL));
-				memcpy(fftDataL, fifoL, sizeof(fifoL));
-				//nextFFTBlockReady = true;
+				zeromem(fftDataL, sizeof(fftDataL));		// 
+				memcpy(fftDataL, fifoL, sizeof(fifoL));		// copy fifoL into fftDataL, usage in BeatDetector.cpp
+				//nextFFTBlockReady = true; // commented: flag set in channel 1 case
 			}
 			fifoIndexL = 0;
 		}
 		fifoL[fifoIndexL++] = sample;  // [9]
-	}
-	else if(channel == 1)
-	{
-		if (fifoIndexR == fftSize)    // [8]
+
+		if (APMfifoIndexL == nbuff*bs*ds) // if nbuff buffers (bs) are full
 		{
-			if (!nextFFTBlockReady) // [9]
+			if (!nextAPMBlockReady) {
+				zeromem(fifoBuffL, sizeof(fifoBuffL));
+				memcpy(fifoBuffL, fifoAPML, sizeof(fifoAPML)); // fifoAPML into fifoBuffL, usage in APM.cpp
+			}
+			APMfifoIndexL = 0;
+		}
+		if (APMfifoIndexL % ds == 0) // downsampled buffer
+			fifoAPML[APMfifoIndexL/ds] = sample;
+
+		APMfifoIndexL++;
+		
+		
+	}
+	else if (channel == 1)		// analogous to previous case
+	{
+		if (fifoIndexR == fftSize)   
+		{
+			if (!nextFFTBlockReady) 
 			{
 				zeromem(fftDataR, sizeof(fftDataR));
 				memcpy(fftDataR, fifoR, sizeof(fifoR));
@@ -242,7 +258,21 @@ void PluginProcessor::pushNextSampleIntoFifo(float sample, int channel) noexcept
 			}
 			fifoIndexR = 0;
 		}
-		fifoR[fifoIndexR++] = sample;  // [9]
+		fifoR[fifoIndexR++] = sample; 
+
+		if (APMfifoIndexR == nbuff*bs*ds)
+		{
+			if (!nextAPMBlockReady) {
+				zeromem(fifoBuffR, sizeof(fifoBuffR));
+				memcpy(fifoBuffR, fifoAPMR, sizeof(fifoAPMR));
+				nextAPMBlockReady = true;
+			}
+			APMfifoIndexR = 0;
+		}
+		if (APMfifoIndexR % ds == 0)
+			fifoAPMR[APMfifoIndexR/ds] = sample;
+		APMfifoIndexR++;
+		
 	}
 }
 
@@ -261,6 +291,14 @@ bool PluginProcessor::getNextFFTBlockReady() {
 
 void PluginProcessor::setNextFFTBlockReady(bool setup) {
 	nextFFTBlockReady = setup;
+}
+
+bool PluginProcessor::getNextAPMBlockReady() {
+	return nextAPMBlockReady;
+}
+
+void PluginProcessor::setNextAPMBlockReady(bool setup) {
+	nextAPMBlockReady = setup;
 }
 
 void PluginProcessor::setThreadBoolean(bool setup){

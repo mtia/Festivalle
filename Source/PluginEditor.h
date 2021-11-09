@@ -15,9 +15,11 @@ It contains the basic framework code for a JUCE plugin editor.
 #include "PanFeature.h"
 #include "BeatDetector.h"
 #include "SpectralCentroid.h"
+#include "APM.h"
 #include <iostream>
 #include <queue>
 #include <stack>
+using namespace juce;
 
 
 
@@ -68,6 +70,7 @@ private:
 	TextEditor midiMessagesBox;
     
 	TextEditor actualBPM;
+	TextEditor acpmBPM;
 	TextEditor actualVar;
 	TextEditor minimumVar;
 	TextEditor transientAttack;
@@ -115,6 +118,7 @@ private:
     PanFeature panFeature;
     BeatDetector beatDetector;
     SpectralCentroid spectralCentroid;
+	APM apm;
     
 	Slider midiChannelSelector;
 	

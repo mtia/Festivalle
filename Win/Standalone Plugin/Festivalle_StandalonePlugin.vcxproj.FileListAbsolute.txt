@@ -1,0 +1,2 @@
+F:\Desktop\NewProject\Builds\VisualStudio2019\x64\Debug\Standalone Plugin\NewProject.exe
+F:\Desktop\NewProject\Builds\VisualStudio2019\x64\Debug\Standalone Plugin\NewProject.pdb

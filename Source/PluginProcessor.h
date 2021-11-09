@@ -11,7 +11,10 @@ It contains the basic framework code for a JUCE plugin processor.
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+#define ds 16 // downsampling
+#define bs 2400 // fs/ds/fmin -> 48000/ds/1.25 (75 bpm)
+#define nbuff 4 // number of buffers of bs samples to analyze in APM.cpp
+using namespace juce;
 
 //==============================================================================
 /**
@@ -76,6 +79,8 @@ public:
 
 	bool getNextFFTBlockReady();
 	void setNextFFTBlockReady(bool setup);
+	bool getNextAPMBlockReady();
+	void setNextAPMBlockReady(bool setup);
 
 	int numSample = 0;
 
@@ -85,6 +90,15 @@ public:
 	int fifoIndexR = 0;
 	float fftDataL[fftSize*2];    // [5]
 	float fftDataR[fftSize*2];
+
+	int APMfifoIndexL = 0;
+	int APMfifoIndexR = 0;
+	
+	int APMbuffsize = bs;
+	float fifoAPML[bs*nbuff];
+	float fifoAPMR[bs*nbuff];
+	float fifoBuffL[bs*nbuff];
+	float fifoBuffR[bs*nbuff];
     
 private:
 	double rawVolume = 1;
@@ -92,6 +106,7 @@ private:
 	int count = 0;
 
 	bool nextFFTBlockReady = false; // [7]
+	bool nextAPMBlockReady = false;
 
     float leftChannel[1024];
     float rightChannel[1024];
