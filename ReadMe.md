@@ -42,6 +42,16 @@ The *Manual mode* button is used as a substitute for the beat-tracker in case th
 
 The *BPM recalculate* button is used instead to restart the automatic calculation of BPM in the case in which between one song and the other the variance found is not lower than that one of the previous song (read again the calculation method of BPM). This would mean that the BPM would not be immediately updated with the true one.
 
+## BPM Calculus using autocorrelation
+
+BPM is also calculated from the autocorrelation of the signal in the audio buffers, with no need for previous beat detection.
+The two values are compared in the same box.
+<p align="center"> <img src="images/BPMAutocorr.png" > </p>
+
+The signal is downsampled in in this stage to avoid excessive CPU load.
+A buffer of 9600 samples is analyzed, computing 1200 time lags that span from 75 BPM to 150 BPM.
+<p align="center"> <img src="images/Autocorr.png" > </p>
+
 ## Feature extraction phase
 
 Features' extraction is a crucial phase for what concern the rules for the choice of the lights' animations: this is made in real-time, frame by frame and independently from the beat-tracking algorithm.
@@ -126,4 +136,4 @@ Davide Gioiosa <br>
 Davide Mori <br>
 Francesco Pino <br>
 
-Mattia Vassena for the Beat detection method using Autocorrelation Phase Matrix
+Mattia Vassena for the BPM calculus using the autocorrelation method
