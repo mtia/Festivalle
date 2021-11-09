@@ -1,3 +1,5 @@
+Note: This version integrates the double BPM calculation to the existing project https://github.com/Karwelox/Festivalle
+
 # The concept
 The goal of this project is to automate the control of the lighting of an architectural structure composed by LED stripes in a dynamic and smart way, during an electronic music show. <br>
 This is realized by a plug-in which analyzes the mixer-output audio signal in real-time and it communicates with a software which can handle the lights' animations thanks to the MIDI protocol. <br>
@@ -128,6 +130,7 @@ The animations were created with 3D Mapper based on the LED system, their dispos
 - Augusto Sarti, «Sound Analysis Tools» <br>
 
 ## Software Developers Team
+BPM calculus using the autocorrelation method added by Mattia Vassena
 
 Davide Dal Cortivo <br>
 Edoardo Epifani <br>
@@ -135,5 +138,3 @@ Carmelo Fascella <br>
 Davide Gioiosa <br>
 Davide Mori <br>
 Francesco Pino <br>
-
-Mattia Vassena for the BPM calculus using the autocorrelation method
